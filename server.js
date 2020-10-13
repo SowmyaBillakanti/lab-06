@@ -41,7 +41,7 @@ app.get('/weather', (request, response) => {
 
 function Weather(data) {
     this.forecast = data.weather.description;
-    this.time = data.datatime;
+    this.time = data.datetime;
 }
 
 app.get('*', (request, response) => {
