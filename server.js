@@ -19,10 +19,20 @@ app.get('/location', (request, response) => {
     response.send(newLocation);
 });
 
-// app.get('/weather', (request, response) => {
-//     const getWeather = require('.data/weather.json');
-//     const 
-// })
+app.get('/weather', (request, response) => {
+    const getWeather = require('.data/weather.json');
+    const weatherArr = [];
+    getWeather.data.forEach(weather => {
+        const currentWeather = new Weather(weather);
+        weatherArr.push(currentWeather);
+    })
+    response.send(weatherArr);
+});
+
+function Weather(data) {
+    this.forecast = data.weather.description;
+    this.time = data.datatime;
+}
 
 
 function Location(city, search_query) {
