@@ -3,6 +3,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const superagent = require('superagent');
 const cors = require('cors');
 
 const app = express();
@@ -32,7 +33,7 @@ function Location(city, search_query) {
 app.get('/weather', (request, response) => {
     const getWeather = require('./data/weather.json');
     const weatherArr = [];
-    getWeather.data.forEach(weather => {
+    getWeather.data.map(weather => {
         const currentWeather = new Weather(weather);
         weatherArr.push(currentWeather);
     })
