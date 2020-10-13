@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
-// Server route to give us our "homepage"
 app.get('/location', (request, response) => {
     try {
         console.log(request.query, request.body);
@@ -31,7 +30,7 @@ function Location(city, search_query) {
 }
 
 app.get('/weather', (request, response) => {
-    const getWeather = require('.data/weather.json');
+    const getWeather = require('./data/weather.json');
     const weatherArr = [];
     getWeather.data.forEach(weather => {
         const currentWeather = new Weather(weather);
