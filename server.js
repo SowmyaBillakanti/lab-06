@@ -14,29 +14,32 @@ app.use(cors());
 
 app.get('/location', (request, response) => {
     try {
-        console.log(request.query, request.body);
-        const getLocation = require('./data/location.json');
-        const search_query = request.query.city;
-        
-        const url = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${city}&format=json&limit=1`;
+        // console.log(request.query, request.body);
+        // const getLocation = require('./data/location.json');
+        const city = request.query.city;
+
+        const url = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${city}&format=json`;
+    
 
         superagent.get(url)
         .then(data => {
             const newLocation = data.body[0];
-            const locationData = new Location(city, getLocation);
+            console.log(newLocation);
+            const locationData = new Location(city, newLocation);
             console.log(locationData);
             response.json(locationData)
-        });
+        })
+        .catch(err => console.error('returned error:', err));
     } catch {
         response.status(500).send('Sorry, something went wrong');
     }
 });
 
 function Location(city, search_query) {
-    this.search_query = search_query;
-    this.formatted_query = city.display_name;
-    this.latitude = city.lat;
-    this.longitude = city.lon;
+    this.search_query = city;
+    this.formatted_query = search_query.display_name;
+    this.latitude = search_query.lat;
+    this.longitude = search_query.lon;
 }
 
 app.get('/weather', (request, response) => {
