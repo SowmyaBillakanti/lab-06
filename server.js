@@ -9,6 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const GEOCODE_API_KEY = process.env.GEOCODE_API_KEY;
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
+const TRAIL_API_KEY = process.env.TRAIL_API_KEY;
 
 app.use(cors());
 
@@ -61,9 +62,39 @@ app.get('/weather', searchWeather)
         .catch(err => console.error('weather returned error:', err));
     }
 
+    function Trails(data) {
+        this.name = data.name;
+        this.location = data.location;
+        this.length = data.length;
+        this.stars = data.stars;
+        this.star_votes = data.starVotes;
+        this.summary = data.summary;
+        this.trail_url = data.trail_url;
+        this.conditions = data.conditionStatus;
+        this.condition_time = data.conditionDate.split(' ')[1];
+        this.condition_date = data.conditionDate.split(' ')[0];
+    }
+
     
+app.get('/trails', searchTrails)
+    function searchTrails (request, response) {
+        const lat = request.query.latitude;
+        const lon = request.query.longitude;
+        // console.log(request.query);
+        console.log('latitude', lat);
+        console.log('longitude', lon);
+        const url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=10&key=${TRAIL_API_KEY}`;
 
-
+        superagent.get(url)
+        .then(result => {
+            console.log('+++++++++++++++++++++++++++++++', result.body.trails);
+            const trailData = result.body.trails.map(trail => {
+                return new Trails(trail)
+               })
+            response.send(trailData);
+        })
+        .catch(err => console.error('Trail returned error:', err));
+    }
 
 app.get('*', (request, response) => {
     response.status(500).send('Sorry something went wrong');
