@@ -14,8 +14,6 @@ app.use(cors());
 
 app.get('/location', (request, response) => {
     try {
-        // console.log(request.query, request.body);
-        // const getLocation = require('./data/location.json');
         const city = request.query.city;
 
         const url = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${city}&format=json`;
@@ -29,7 +27,7 @@ app.get('/location', (request, response) => {
             console.log(locationData);
             response.json(locationData)
         })
-        .catch(err => console.error('returned error:', err));
+        .catch(err => console.error('location returned error:', err));
     } catch {
         response.status(500).send('Sorry, something went wrong');
     }
@@ -42,21 +40,30 @@ function Location(city, search_query) {
     this.longitude = search_query.lon;
 }
 
-app.get('/weather', (request, response) => {
-    // const getWeather = require('./data/weather.json');
-    const url = `HTTPS: https://api.weatherbit.io/v2.0/forecast/daily?kry${WEATHER_API_KEY}&city=${undefined}`;
-    const weatherArr = [];
-    getWeather.data.map(weather => {
-        const currentWeather = new Weather(weather);
-        weatherArr.push(currentWeather);
-    })
-    response.send(weatherArr);
-});
-
 function Weather(data) {
     this.forecast = data.weather.description;
     this.time = data.datetime;
 }
+
+app.get('/weather', searchWeather)
+    function searchWeather (request, response) {
+        const lat = request.query.latitude;
+        const lon = request.query.longitude;
+        const url = `http://api.weatherbit.io/v2.0/forecast/daily?key=${WEATHER_API_KEY}&days=8&lat=${lat}&lon=${lon}`;
+    
+        superagent.get(url)
+        .then(result => {
+            const dailyWeather = result.body.data.map(day => {
+                return new Weather(day);
+            });
+            response.send(dailyWeather);
+        })
+        .catch(err => console.error('weather returned error:', err));
+    }
+
+    
+
+
 
 app.get('*', (request, response) => {
     response.status(500).send('Sorry something went wrong');
