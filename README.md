@@ -62,4 +62,4 @@ Created a method to get the path to Location and weather that results in showing
 01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource. -->
 
 ## Credits and Collaborations
-Chance and Tahmina Ringer(Classmate) assisted in troubleshooting
+Skyler and Nicco assisted in troubleshooting
